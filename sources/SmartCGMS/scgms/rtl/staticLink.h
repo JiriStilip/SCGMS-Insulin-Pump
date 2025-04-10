@@ -1,0 +1,1 @@
+void* resolve_symbol_static(const char *symbol_name) noexcept;
