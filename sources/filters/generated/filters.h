@@ -3,6 +3,7 @@
 #include <filters/filter_chain/print_filter/src/descriptor.h>
 #include <filters/filter_chain/watchdog_filter/src/descriptor.h>
 #include <filters/filter_chain/data_filter/src/descriptor.h>
+#include <filters/filter_chain/oled_filter/src/descriptor.h>
 #include <scgms/iface/UIIface.h>
 
 class CLoaded_Filters

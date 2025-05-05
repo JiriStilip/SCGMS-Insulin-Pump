@@ -25,6 +25,7 @@ void CLoaded_Filters::load_descriptors()
 	get_descriptors(do_get_filter_descriptors_print_filter);
 	get_descriptors(do_get_filter_descriptors_watchdog_filter);
 	get_descriptors(do_get_filter_descriptors_data_filter);
+	get_descriptors(do_get_filter_descriptors_oled_filter);
 }
 
 HRESULT CLoaded_Filters::get_filter_descriptors_body(scgms::TFilter_Descriptor **begin, scgms::TFilter_Descriptor **end)
@@ -55,6 +56,10 @@ scgms::SFilter create_filter_body(const GUID &id, scgms::IFilter *next_filter)
 		result = refcnt::make_shared_reference_ext<scgms::SFilter, scgms::IFilter>(filter, false);
 	}
 	if (do_create_filter_data_filter(&id, next_filter, &filter) == S_OK)
+	{
+		result = refcnt::make_shared_reference_ext<scgms::SFilter, scgms::IFilter>(filter, false);
+	}
+	if (do_create_filter_oled_filter(&id, next_filter, &filter) == S_OK)
 	{
 		result = refcnt::make_shared_reference_ext<scgms::SFilter, scgms::IFilter>(filter, false);
 		return result;
