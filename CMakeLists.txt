@@ -72,6 +72,7 @@ FILE(GLOB_RECURSE drivers
     "sources/Rpi/*.c"
     "sources/Rpi/*.s"
     "sources/Rpi/*.h"
+    "sources/Rpi/*.cpp"
 )
 
 ADD_EXECUTABLE(rpiscgms "sources/main.c" ${freertos_src} ${drivers}  ${posix_src} ${scgms} ${filters})
