@@ -41,6 +41,7 @@
 #include "input.h"
 #include <FreeRTOS.h>
 #include <task.h>
+#include "rtl/rattime.h"
 #elif defined(ESP32)
 #include "driver/uart.h"
 #include "driver/gpio.h"
@@ -69,16 +70,24 @@ CData_Filter::~CData_Filter()
 	//
 }
 
-void CData_Filter::Create_Event(int level)
+void CData_Filter::Create_Event(int level, double time)
 {
 	scgms::UDevice_Event event{scgms::NDevice_Event_Code::Level};
 	event.level() = level;
+	event.signal_id() = scgms::signal_BG;
+	event.device_time() = time;
+
 	mOutput.Send(event);
 }
 
 bool CData_Filter::isRunning()
 {
 	return running;
+}
+
+time_t CData_Filter::GetFirstEventTimestamp()
+{
+	return first_event_timestamp;
 }
 
 #if defined(ESP32)
@@ -126,17 +135,21 @@ void datafilter_task(void *pvParameters)
 {
 	print("Starting generating data");
 	CData_Filter *data = (CData_Filter *)pvParameters;
-	const TickType_t xDelay = 1000 / portTICK_RATE_MS;
+	const TickType_t xDelay = 5000 / portTICK_RATE_MS;
 	int level;
+	double start_time = Unix_Time_To_Rat_Time(data->GetFirstEventTimestamp());
+	double time = start_time;
 	int index = 0;
 	while (data->isRunning())
 	{
 		level = random_levels[index++];
-		data->Create_Event(level);
+		time += (5.0 * 60.0 * 1000.0) * InvMSecsPerDay; // 5 min measurement interval 
+		data->Create_Event(level, time);
 		vTaskDelay(xDelay);
 		if(index >= sizeof(random_levels)/sizeof(random_levels[0]))
 		{
 			index = 0;
+			time = start_time;
 			print("Restarting test event loop");
 		}
 	}
@@ -157,6 +170,7 @@ HRESULT IfaceCalling CData_Filter::QueryInterface(const GUID *riid, void **ppvOb
 HRESULT IfaceCalling CData_Filter::Do_Configure(scgms::SFilter_Configuration configuration, refcnt::Swstr_list &error_description)
 {
 	auto create_task = configuration.Read_Bool(data_filter::rsCreateTask, false);
+	first_event_timestamp = static_cast<time_t>(configuration.Read_Int(data_filter::rsFirstEventTimestamp, 0));
 
 	running = true;
 	events_total = 0;

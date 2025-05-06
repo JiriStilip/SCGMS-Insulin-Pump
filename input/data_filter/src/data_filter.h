@@ -38,6 +38,7 @@
 
 #include <rtl/FilterLib.h>
 #include <rtl/referencedImpl.h>
+#include "rtl/rattime.h"
 #include "pthread.h"
 
 #pragma warning( push )
@@ -54,12 +55,14 @@ class CData_Filter : public scgms::CBase_Filter {
 		pthread_t data_thread;
 		#endif
 		bool running;
+		time_t first_event_timestamp;
 	protected:
 		virtual HRESULT Do_Execute(scgms::UDevice_Event event) override final;
 		virtual HRESULT Do_Configure(scgms::SFilter_Configuration configuration, refcnt::Swstr_list& error_description) override final;
 	public:
 		bool isRunning();
-		void Create_Event(int level);
+		time_t GetFirstEventTimestamp();
+		void Create_Event(int level, double time);
 		CData_Filter(scgms::IFilter *output);
 		virtual ~CData_Filter();
 	

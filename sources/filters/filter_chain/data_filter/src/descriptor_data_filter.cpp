@@ -52,24 +52,29 @@
 
 namespace data_filter {
 
-	constexpr size_t param_count = 1;
+	constexpr size_t param_count = 2;
 
 	const scgms::NParameter_Type param_type[param_count] = {
-		scgms::NParameter_Type::ptBool
+		scgms::NParameter_Type::ptBool,
+		scgms::NParameter_Type::ptInt64
 	};
 
 	const wchar_t* ui_param_name[param_count] = {
-		L"Create Task Parameter"
+		L"Create Task Parameter",
+		L"First Event Timestamp Parameter"
 	};
 
 	const wchar_t* rsCreateTask = L"create_task";
+	const wchar_t* rsFirstEventTimestamp = L"first_event_timestamp";
 
 	const wchar_t* config_param_name[param_count] = {
-		rsCreateTask
+		rsCreateTask,
+		rsFirstEventTimestamp
 	};
 
 	const wchar_t* ui_param_tooltips[param_count] = {
-		L"Decides whether a data generating/reading task is created"
+		L"Decides whether a data generating/reading task is created",
+		L"Sets the UNIX timestamp of the first event"
 	};
 
 	const wchar_t* filter_name = L"Data filter";

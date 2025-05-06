@@ -45,6 +45,8 @@ namespace data_filter {
 	constexpr GUID id = { 0x893fdedc, 0xc5ec, 0x45cc, { 0xba, 0x9, 0xc3, 0x1e, 0x14, 0xf6, 0xdb, 0x01 } }; // {893FDEDC-C5EC-45CC-BA09-C31E14F6DB01}
 
 	extern const wchar_t* rsCreateTask;
+
+	extern const wchar_t* rsFirstEventTimestamp;
 }
 
 extern "C" HRESULT IfaceCalling do_create_filter_data_filter(const GUID *id, scgms::IFilter *output, scgms::IFilter **filter) ;
