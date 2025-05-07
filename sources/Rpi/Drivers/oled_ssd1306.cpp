@@ -210,9 +210,9 @@ void CDisplay_SSD1306::Flip()
     {
         packet[0] = SSD1306_Cmd::Data_Continue;
 
-        for (int j = 1; j <= PktSize; j++) 
+        for (int j = 0; j < PktSize; ++j) 
         {
-            packet[j] = mBuffer[i + j];
+            packet[j + 1] = mBuffer[i + j];
         }
         
         Send_Command_Sequence(packet, sizeof(packet));
