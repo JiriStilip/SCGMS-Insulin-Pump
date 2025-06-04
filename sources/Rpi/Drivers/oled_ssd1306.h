@@ -57,7 +57,7 @@ class CDisplay_SSD1306
         // buffer pro bitovou mapu pixelu
         uint8_t* mBuffer;
         // sirka a vyska displeje
-        uint8_t mWidth, mHeight;
+        uint16_t mWidth, mHeight;
 
     protected:
         // odesle pres I2C prikazovou sekvenci do displeje
@@ -68,12 +68,17 @@ class CDisplay_SSD1306
 
         // otevre displej; definujeme velikost matice displeje v pixelech
         // predpoklada provedenou inicializaci i2c
-        void Init(uint8_t width = 128, uint8_t height = 64);
+        void Init(uint16_t width = 128, uint16_t height = 64);
 
         // vymaze obsah displeje
         void Clear(bool clearWhite = false);
         // nastavi pixel na danych souradnicich
         void Set_Pixel(uint16_t x, uint16_t y, bool set);
+
+        void Put_VLine(uint16_t x);
+        void Put_HLine(uint16_t y);
+        void Fill_Rectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool fillWhite = true);
+
         // vykresli znak na vystup displeje z interni sady znaku
         void Put_Char(uint16_t x, uint16_t y, char c);
         // vykresli retezec znaku na displej

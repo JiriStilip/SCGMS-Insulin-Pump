@@ -11,7 +11,7 @@ CDisplay_SSD1306::CDisplay_SSD1306()
 
 }
 
-void CDisplay_SSD1306::Init(uint8_t width, uint8_t height)
+void CDisplay_SSD1306::Init(uint16_t width, uint16_t height)
 {
     // zaokrouhlime nahoru na nasobek osmi (na cele stranky)
     if (height % 8 != 0)
@@ -130,6 +130,29 @@ void CDisplay_SSD1306::Set_Pixel(uint16_t x, uint16_t y, bool set)
         mBuffer[x + (y / 8) * mWidth] |= (1 << (y & 7));
     else
         mBuffer[x + (y / 8) * mWidth] &= ~(1 << (y & 7));
+}
+
+void CDisplay_SSD1306::Put_VLine(uint16_t x)
+{
+    for (int y = 0; y < mHeight; y++)
+        Set_Pixel(x, y, true);
+}
+
+void CDisplay_SSD1306::Put_HLine(uint16_t y)
+{
+    for (int x = 0; x < mWidth; x++)
+        Set_Pixel(x, y, true);
+}
+
+void CDisplay_SSD1306::Fill_Rectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool fillWhite)
+{
+    for (int pos_x = x; pos_x < (x + w); pos_x++)
+    {
+        for (int pos_y = y; pos_y < (y + h); pos_y++)
+        {
+            Set_Pixel(pos_x, pos_y, fillWhite);
+        }
+    }
 }
 
 void CDisplay_SSD1306::Put_Char(uint16_t x, uint16_t y, char c)
