@@ -38,11 +38,13 @@
 
 #include <rtl/guid.h>
 
-namespace data_filter {
+namespace cgm_filter {
 
-	constexpr GUID id = { 0x893fdedc, 0xc5ec, 0x45cc, { 0xba, 0x9, 0xc3, 0x1e, 0x14, 0xf6, 0xdb, 0x01 } }; // {893FDEDC-C5EC-45CC-BA09-C31E14F6DB01}
+	constexpr GUID id = { 0xf73d50b2, 0xe7a2, 0x4827, { 0xa2, 0x92, 0x7a, 0xc8, 0x96, 0x61, 0x92, 0x91 } }; // {F73D50B2-E7A2-4827-A292-7AC896619291}
 
-	extern const wchar_t* rsCreateTask;
+	extern const wchar_t* rsTaskPeriod;
 
 	extern const wchar_t* rsFirstEventTimestamp;
+
+	extern const wchar_t* rsMeasurementInterval;
 }

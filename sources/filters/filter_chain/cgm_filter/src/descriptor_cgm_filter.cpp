@@ -35,7 +35,7 @@
  */
 
 #include "descriptor.h"
-#include "ema_filter.h"
+#include "cgm_filter.h"
 
 #include <iface/DeviceIface.h>
 #include <iface/FilterIface.h>
@@ -47,32 +47,42 @@
 #include <array>
 
 /*
- * Exponential moving average filter descriptor block
+ * Example filter descriptor block
  */
 
-namespace ema_filter {
+namespace cgm_filter {
 
-	constexpr size_t param_count = 1;
+	constexpr size_t param_count = 3;
 
 	const scgms::NParameter_Type param_type[param_count] = {
+		scgms::NParameter_Type::ptDouble,
+		scgms::NParameter_Type::ptDouble,
 		scgms::NParameter_Type::ptDouble
 	};
 
 	const wchar_t* ui_param_name[param_count] = {
-		L"Alpha parameter"
+		L"Task Period Parameter",
+		L"First Event Timestamp Parameter",
+		L"Simulated Measurements Interval Parameter"
 	};
 
-	const wchar_t* rsAlpha = L"alpha";
+	const wchar_t* rsTaskPeriod = L"task_period";
+	const wchar_t* rsFirstEventTimestamp = L"first_event_timestamp";
+	const wchar_t* rsMeasurementInterval = L"measurement_interval";
 
 	const wchar_t* config_param_name[param_count] = {
-		rsAlpha
+		rsTaskPeriod,
+		rsFirstEventTimestamp,
+		rsMeasurementInterval
 	};
 
 	const wchar_t* ui_param_tooltips[param_count] = {
-		L"Alpha value of exponential moving average (default value 0.3)"
+		L"Sets the period of the data reading task.",
+		L"Sets the rattime timestamp of the first event.",
+		L"Sets the interval between the simulated measurements."
 	};
 
-	const wchar_t* filter_name = L"EMA filter";
+	const wchar_t* filter_name = L"CGM Input Filter";
 
 	const scgms::TFilter_Descriptor descriptor = {
 		id,
@@ -90,21 +100,21 @@ namespace ema_filter {
  * Array of available filter descriptors
  */
 
-const std::array<scgms::TFilter_Descriptor, 1> filter_descriptions = { { ema_filter::descriptor } };
+const std::array<scgms::TFilter_Descriptor, 1> filter_descriptions = { { cgm_filter::descriptor } };
 
 /*
  * Filter library interface implementations
  */
 
-extern "C" HRESULT IfaceCalling do_get_filter_descriptors(scgms::TFilter_Descriptor **begin, scgms::TFilter_Descriptor **end) {
+extern "C" HRESULT IfaceCalling do_get_filter_descriptors_cgm_filter(scgms::TFilter_Descriptor **begin, scgms::TFilter_Descriptor **end) {
 
 	return do_get_descriptors(filter_descriptions, begin, end);
 }
 
-extern "C" HRESULT IfaceCalling do_create_filter(const GUID *id, scgms::IFilter *output, scgms::IFilter **filter) {
+extern "C" HRESULT IfaceCalling do_create_filter_cgm_filter(const GUID *id, scgms::IFilter *output, scgms::IFilter **filter) {
 
-	if (*id == ema_filter::descriptor.id) {
-		return Manufacture_Object<CEma_Filter>(filter, output);
+	if (*id == cgm_filter::descriptor.id) {
+		return Manufacture_Object<CCGM_Filter>(filter, output);
 	}
 
 	return E_NOTIMPL;

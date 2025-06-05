@@ -35,7 +35,7 @@
  */
 
 #include "descriptor.h"
-#include "data_filter.h"
+#include "cgm_filter.h"
 
 #include <iface/DeviceIface.h>
 #include <iface/FilterIface.h>
@@ -50,34 +50,39 @@
  * Example filter descriptor block
  */
 
-namespace data_filter {
+namespace cgm_filter {
 
-	constexpr size_t param_count = 2;
+	constexpr size_t param_count = 3;
 
 	const scgms::NParameter_Type param_type[param_count] = {
-		scgms::NParameter_Type::ptBool,
-		scgms::NParameter_Type::ptInt64
+		scgms::NParameter_Type::ptDouble,
+		scgms::NParameter_Type::ptDouble,
+		scgms::NParameter_Type::ptDouble
 	};
 
 	const wchar_t* ui_param_name[param_count] = {
-		L"Create Task Parameter",
-		L"First Event Timestamp Parameter"
+		L"Task Period Parameter",
+		L"First Event Timestamp Parameter",
+		L"Simulated Measurements Interval Parameter"
 	};
 
-	const wchar_t* rsCreateTask = L"create_task";
+	const wchar_t* rsTaskPeriod = L"task_period";
 	const wchar_t* rsFirstEventTimestamp = L"first_event_timestamp";
+	const wchar_t* rsMeasurementInterval = L"measurement_interval";
 
 	const wchar_t* config_param_name[param_count] = {
-		rsCreateTask,
-		rsFirstEventTimestamp
+		rsTaskPeriod,
+		rsFirstEventTimestamp,
+		rsMeasurementInterval
 	};
 
 	const wchar_t* ui_param_tooltips[param_count] = {
-		L"Decides whether a data generating/reading task is created",
-		L"Sets the UNIX timestamp of the first event"
+		L"Sets the period of the data reading task.",
+		L"Sets the rattime timestamp of the first event.",
+		L"Sets the interval between the simulated measurements."
 	};
 
-	const wchar_t* filter_name = L"Data filter";
+	const wchar_t* filter_name = L"CGM Input Filter";
 
 	const scgms::TFilter_Descriptor descriptor = {
 		id,
@@ -95,21 +100,21 @@ namespace data_filter {
  * Array of available filter descriptors
  */
 
-const std::array<scgms::TFilter_Descriptor, 1> filter_descriptions = { { data_filter::descriptor } };
+const std::array<scgms::TFilter_Descriptor, 1> filter_descriptions = { { cgm_filter::descriptor } };
 
 /*
  * Filter library interface implementations
  */
 
-extern "C" HRESULT IfaceCalling do_get_filter_descriptors_data_filter(scgms::TFilter_Descriptor **begin, scgms::TFilter_Descriptor **end) {
+extern "C" HRESULT IfaceCalling do_get_filter_descriptors(scgms::TFilter_Descriptor **begin, scgms::TFilter_Descriptor **end) {
 
 	return do_get_descriptors(filter_descriptions, begin, end);
 }
 
-extern "C" HRESULT IfaceCalling do_create_filter_data_filter(const GUID *id, scgms::IFilter *output, scgms::IFilter **filter) {
+extern "C" HRESULT IfaceCalling do_create_filter(const GUID *id, scgms::IFilter *output, scgms::IFilter **filter) {
 
-	if (*id == data_filter::descriptor.id) {
-		return Manufacture_Object<CData_Filter>(filter, output);
+	if (*id == cgm_filter::descriptor.id) {
+		return Manufacture_Object<CCGM_Filter>(filter, output);
 	}
 
 	return E_NOTIMPL;
