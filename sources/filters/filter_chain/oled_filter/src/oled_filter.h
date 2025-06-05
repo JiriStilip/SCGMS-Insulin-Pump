@@ -13,6 +13,9 @@ class COLED_Filter : public scgms::CBase_Filter {
 		virtual HRESULT Do_Execute(scgms::UDevice_Event event) override final;
 		virtual HRESULT Do_Configure(scgms::SFilter_Configuration configuration, refcnt::Swstr_list& error_description) override final;
 	public:
+		void drawMainScreen();
+		void updateBG(double level);
+		void updateTime(double time);
 		COLED_Filter(scgms::IFilter *output);
 		virtual ~COLED_Filter();
 	
