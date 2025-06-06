@@ -39,11 +39,7 @@
 #include "utils/string_utils.h"
 #include "rtl/rattime.h"
 
-#if defined(EMCC)
-#include <emscripten.h>
-#elif defined(RPI)
 #include <uart_print.h>
-#endif
 
 CPrint_Filter::CPrint_Filter(scgms::IFilter *output) : CBase_Filter(output)
 {
@@ -72,51 +68,22 @@ HRESULT IfaceCalling CPrint_Filter::Do_Execute(scgms::UDevice_Event event)
 {
 	if (event.is_level_event())
 	{
-#if defined(EMCC)
-		std::string js_final = R"(
-			var message = {
-    		data_level: )" + std::to_string(event.level()) + R"(,
-			data_device_time: ")" + 	Rat_Time_To_Local_Time_Str(event.device_time(), "%H:%M:%S") + R"(",
-			data_logical_time: )" + std::to_string(event.logical_time()) +  R"(
-			};			
-			postData(message);
-			)";
-		emscripten_run_script(js_final.c_str());
-
-#elif defined(ESP32) || defined(WASM)
-		printf("\nEvent level:\n");
-		printf("%f\n", event.level());
-		printf("Event time:\n");
-		std::string time_str = Rat_Time_To_Local_Time_Str(event.device_time(), "%H:%M:%S");
-		printf("%s\n", time_str.c_str());
-#elif defined(RPI)
 		print("\nEvent level: ");
 		print_d(event.level());
 		print("Event time:");
 		std::string time_str = Rat_Time_To_Local_Time_Str(event.device_time(), "%H:%M:%S");
 		print(time_str.c_str());
-#endif
 	}
 	else if (event.is_info_event())
 	{
 		std::wstring wstr = refcnt::WChar_Container_To_WString(event.info.get());
 		std::string str = Narrow_WString(wstr);
-#if defined(ESP32) || defined(WASM)
-		printf("\nEvent Info:\n");
-		printf("%s", str.c_str());
-#elif defined(RPI)
 		print("\nEvent Info:");
 		print(str.c_str());
-#endif
 	}
 	else if (event.event_code() == scgms::NDevice_Event_Code::Shut_Down)
 	{
-		#if defined(ESP32) || defined(WASM)
-		printf("\nShutdown Event\n");
-		#elif defined(RPI)
 		print("\nShutdown Event");
-		#endif
-
 	}
 	return mOutput.Send(event);
 };

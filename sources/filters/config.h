@@ -2,7 +2,7 @@
 const char* config_data =
 "\r\n"
 "[Filter_001_{F73D50B2-E7A2-4827-A292-7AC896619291}]\r\n"
-"task_period = 1000\r\n"
+"task_period = 5000\r\n"
 "first_event_timestamp = 45658.0\r\n"
 "measurement_interval = 5\r\n"
 "\r\n"
