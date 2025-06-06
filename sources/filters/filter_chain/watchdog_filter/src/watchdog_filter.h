@@ -49,9 +49,6 @@ private:
 	bool running;
 	int64_t interval;
 	bool alive;
-	#if defined(WASM) || defined(ESP32) 
-	pthread_t wd_thread;
-	#endif
 	void Kick(int64_t event_time);
 
 protected:

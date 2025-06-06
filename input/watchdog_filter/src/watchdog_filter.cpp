@@ -37,32 +37,10 @@
 #include "watchdog_filter.h"
 #include "descriptor.h"
 #include "pthread.h"
-#if defined(EMCC)
-#include <signal.h>
-#elif defined (RPI)
 #include <uart_print.h>
 #include <FreeRTOS.h>
 #include <task.h>
-#endif
 
-#if defined(WASM) || (ESP32)
-void *watchdog_thread(void *pvParameters)
-{
-	printf("Starting watchdog thread\n");
-	CWatchdog_Filter *wd = (CWatchdog_Filter *)pvParameters;
-	while (wd->IsRunning())
-	{
-		if (!wd->IsAlive())
-		{
-			wd->Trigger();
-		}
-		wd->Reset();
-
-		sleep(wd->GetInterval() / 1000);
-	}
-	return 0;
-}
-#elif defined(RPI)
 void watchdog_task(void *pvParameters)
 {
 	print("Starting watchdog task");
@@ -82,7 +60,6 @@ void watchdog_task(void *pvParameters)
 		// stop watchdog, should delete task instead
 	}
 }
-#endif
 
 void CWatchdog_Filter::Kick(int64_t event_time)
 {
@@ -119,13 +96,8 @@ int64_t CWatchdog_Filter::GetInterval()
 
 void CWatchdog_Filter::Trigger()
 {
-	#if defined(WASM) || defined(ESP32)
-	printf("Filter chain INACTIVE!\n");
-	printf("----------------------\n");
-	#elif defined(RPI)
 	print("Filter chain INACTIVE!");
 	print("----------------------");
-	#endif
 }
 
 CWatchdog_Filter::CWatchdog_Filter(scgms::IFilter *output) : CBase_Filter(output)
@@ -153,17 +125,7 @@ HRESULT IfaceCalling CWatchdog_Filter::Do_Configure(scgms::SFilter_Configuration
 	alive = true;
 	logical_time = 0;
 
-	#if defined(ESP32) || defined(EMCC)
-	printf("Creating WD thread\n");
-	int rc = pthread_create(&wd_thread, NULL, watchdog_thread, (void *)this);
-	if (rc)
-	{
-		printf("Error: return code from WD pthread_create() is %d\n", rc);
-	}
-	#elif defined(RPI)
 	xTaskCreate( watchdog_task, "Watchdog", 4*1024, this, 1, NULL );
-	#endif
-
 
 	return S_OK;
 }
@@ -173,15 +135,7 @@ HRESULT IfaceCalling CWatchdog_Filter::Do_Execute(scgms::UDevice_Event event)
 	if (event.event_code() == scgms::NDevice_Event_Code::Shut_Down)
 	{
 		running = false;
-		#if defined(EMCC)
-		printf("Watchdog shutdown\n");
-		pthread_kill(wd_thread, NULL);
-		#elif defined(ESP32)
-		printf("Watchdog shutdown\n");
-		pthread_join(wd_thread, NULL);
-		#elif defined(RPI)
 		print("Watchdog shutdown");
-		#endif
 	}
 	else
 	{
