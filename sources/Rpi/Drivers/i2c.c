@@ -1,14 +1,13 @@
 #include "i2c.h"
 
-#include <uart_print.h>
+#include "gpio.h"
+#include "peripherals.h"
 
 void i2c_init(void)
 {
     // Set GPIO2 and GPIO3 functions to ALT0
-    uint32_t reg = REG_GPIO_GPFSEL0;
-    reg &= ~((7 << 6) | (7 << 9));  // Clear FSEL2 and FSEL3
-    reg |= (4 << 6) | (4 << 9);     // Set ALT0
-    REG_GPIO_GPFSEL0 = reg;
+    gpio_set_function(2, GPIO_FUNCTION_ALT0);
+    gpio_set_function(3, GPIO_FUNCTION_ALT0);
 
     // Set I2C enable
     REG_BSC1_C |= BSC_C_I2CEN;

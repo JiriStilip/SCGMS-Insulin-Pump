@@ -5,9 +5,20 @@
 
 #define PERIPHERAL_BASE 0x20000000
 
+#define TIMER_BASE  (PERIPHERAL_BASE + 0x3000)
+
+#define REG_TIMER_CLO   *((volatile uint32_t *)(TIMER_BASE + 0x04))
+
 #define GPIO_BASE   (PERIPHERAL_BASE + 0x200000)
 
-#define REG_GPIO_GPFSEL0    *((volatile uint32_t *)(GPIO_BASE + 0x00))
+#define GPIO_FUNCTION_INPUT     0
+#define GPIO_FUNCTION_OUTPUT    1
+#define GPIO_FUNCTION_ALT5      2
+#define GPIO_FUNCTION_ALT4      3
+#define GPIO_FUNCTION_ALT0      4
+#define GPIO_FUNCTION_ALT1      5
+#define GPIO_FUNCTION_ALT2      6
+#define GPIO_FUNCTION_ALT3      7
 
 #define BSC1_BASE   (PERIPHERAL_BASE + 0x804000)
 
