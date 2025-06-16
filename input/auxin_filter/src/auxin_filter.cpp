@@ -65,7 +65,7 @@ void CAuxIn_Filter::Create_Event(GUID signal_id, double level)
 void dht11_task(void *pvParameters)
 {
 	CAuxIn_Filter *auxin = (CAuxIn_Filter *)pvParameters;
-	const TickType_t xDelay = 7500 / portTICK_RATE_MS;
+	const TickType_t xDelay = 15000 / portTICK_RATE_MS;
 	while (true)
 	{
 		vTaskDelay(xDelay);
