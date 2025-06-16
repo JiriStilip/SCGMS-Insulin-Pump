@@ -1,0 +1,8 @@
+#pragma once
+
+#include <rtl/guid.h>
+
+namespace inset_filter {
+
+	constexpr GUID id = { 0xb3b796c4, 0x46f8, 0x4f6c, { 0xa6, 0xc1, 0x37, 0xc0, 0xc1, 0x74, 0xbf, 0x90 } }; // {B3B796C4-46F8-4F6C-A6C1-37C0C174BF90}
+}

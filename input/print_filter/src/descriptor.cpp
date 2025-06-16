@@ -47,14 +47,14 @@
 #include <array>
 
 /*
- * Example filter descriptor block
+ * Filter descriptor block
  */
 
 namespace print_filter {
 		
 	constexpr size_t param_count = 0;
 
-	const wchar_t* filter_name = L"Print filter";
+	const wchar_t* filter_name = L"UART Print Filter";
 
 	const scgms::TFilter_Descriptor descriptor = {
 		id,

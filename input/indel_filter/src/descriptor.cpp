@@ -35,7 +35,7 @@
  */
 
 #include "descriptor.h"
-#include "watchdog_filter.h"
+#include "indel_filter.h"
 
 #include <iface/DeviceIface.h>
 #include <iface/FilterIface.h>
@@ -47,10 +47,10 @@
 #include <array>
 
 /*
- * Watchdog filter descriptor block
+ * Filter descriptor block
  */
 
-namespace watchdog_filter {
+namespace indel_filter {
 
 	constexpr size_t param_count = 1;
 
@@ -59,20 +59,20 @@ namespace watchdog_filter {
 	};
 
 	const wchar_t* ui_param_name[param_count] = {
-		L"Watchdog reset interval"
+		L"capacity of the virtual insulin reservoir"
 	};
 
-	const wchar_t* rsInterval = L"interval";
+	const wchar_t* rsReservoirCapacity = L"reservoir_capacity";
 
 	const wchar_t* config_param_name[param_count] = {
-		rsInterval,
+		rsReservoirCapacity,
 	};
 
 	const wchar_t* ui_param_tooltips[param_count] = {
-		L"Interval after which the watchdog filter toggles specified action (e.g. restart)",
+		L"capacity of the virtual insulin reservoir in units",
 	};
 
-	const wchar_t* filter_name = L"Watchdog filter";
+	const wchar_t* filter_name = L"Insulin Delivery Filter";
 
 	const scgms::TFilter_Descriptor descriptor = {
 		id,
@@ -90,7 +90,7 @@ namespace watchdog_filter {
  * Array of available filter descriptors
  */
 
-const std::array<scgms::TFilter_Descriptor, 1> filter_descriptions = { { watchdog_filter::descriptor } };
+const std::array<scgms::TFilter_Descriptor, 1> filter_descriptions = { { indel_filter::descriptor } };
 
 /*
  * Filter library interface implementations
@@ -103,8 +103,8 @@ extern "C" HRESULT IfaceCalling do_get_filter_descriptors(scgms::TFilter_Descrip
 
 extern "C" HRESULT IfaceCalling do_create_filter(const GUID *id, scgms::IFilter *output, scgms::IFilter **filter) {
 
-	if (*id == watchdog_filter::descriptor.id) {
-		return Manufacture_Object<CWatchdog_Filter>(filter, output);
+	if (*id == indel_filter::descriptor.id) {
+		return Manufacture_Object<CInDel_Filter>(filter, output);
 	}
 
 	return E_NOTIMPL;

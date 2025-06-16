@@ -8,6 +8,10 @@
 #ifndef _INTERRUPTS_H_
 #define _INTERRUPTS_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef void (*FN_INTERRUPT_HANDLER) (unsigned int irq, void *pParam);
 
 typedef struct {
@@ -21,4 +25,7 @@ void irqDisable		(const unsigned int irq);
 void irqBlock		(void);
 void irqUnblock		(void);
 
+#ifdef __cplusplus
+}
+#endif
 #endif

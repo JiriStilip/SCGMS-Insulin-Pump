@@ -1,7 +1,10 @@
 #pragma once
+#include <filters/filter_chain/indel_filter/src/descriptor.h>
 #include <filters/filter_chain/print_filter/src/descriptor.h>
+#include <filters/filter_chain/inset_filter/src/descriptor.h>
 #include <filters/filter_chain/cgm_filter/src/descriptor.h>
-#include <filters/filter_chain/watchdog_filter/src/descriptor.h>
+#include <filters/filter_chain/auxin_filter/src/descriptor.h>
+#include <filters/filter_chain/supervisor_filter/src/descriptor.h>
 #include <filters/filter_chain/oled_filter/src/descriptor.h>
 #include <scgms/iface/UIIface.h>
 

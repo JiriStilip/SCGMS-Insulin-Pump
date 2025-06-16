@@ -35,7 +35,7 @@
  */
 
 #include "descriptor.h"
-#include "watchdog_filter.h"
+#include "auxin_filter.h"
 
 #include <iface/DeviceIface.h>
 #include <iface/FilterIface.h>
@@ -47,42 +47,24 @@
 #include <array>
 
 /*
- * Watchdog filter descriptor block
+ * Filter descriptor block
  */
 
-namespace watchdog_filter {
+namespace auxin_filter {
 
-	constexpr size_t param_count = 1;
+	constexpr size_t param_count = 0;
 
-	const scgms::NParameter_Type param_type[param_count] = {
-		scgms::NParameter_Type::ptDouble
-	};
-
-	const wchar_t* ui_param_name[param_count] = {
-		L"Watchdog reset interval"
-	};
-
-	const wchar_t* rsInterval = L"interval";
-
-	const wchar_t* config_param_name[param_count] = {
-		rsInterval,
-	};
-
-	const wchar_t* ui_param_tooltips[param_count] = {
-		L"Interval after which the watchdog filter toggles specified action (e.g. restart)",
-	};
-
-	const wchar_t* filter_name = L"Watchdog filter";
+	const wchar_t* filter_name = L"Auxiliary Input Filter";
 
 	const scgms::TFilter_Descriptor descriptor = {
 		id,
 		scgms::NFilter_Flags::None,
 		filter_name,
 		param_count,
-		param_type,
-		ui_param_name,
-		config_param_name,
-		ui_param_tooltips
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr
 	};
 }
 
@@ -90,21 +72,21 @@ namespace watchdog_filter {
  * Array of available filter descriptors
  */
 
-const std::array<scgms::TFilter_Descriptor, 1> filter_descriptions = { { watchdog_filter::descriptor } };
+const std::array<scgms::TFilter_Descriptor, 1> filter_descriptions = { { auxin_filter::descriptor } };
 
 /*
  * Filter library interface implementations
  */
 
-extern "C" HRESULT IfaceCalling do_get_filter_descriptors_watchdog_filter(scgms::TFilter_Descriptor **begin, scgms::TFilter_Descriptor **end) {
+extern "C" HRESULT IfaceCalling do_get_filter_descriptors_auxin_filter(scgms::TFilter_Descriptor **begin, scgms::TFilter_Descriptor **end) {
 
 	return do_get_descriptors(filter_descriptions, begin, end);
 }
 
-extern "C" HRESULT IfaceCalling do_create_filter_watchdog_filter(const GUID *id, scgms::IFilter *output, scgms::IFilter **filter) {
+extern "C" HRESULT IfaceCalling do_create_filter_auxin_filter(const GUID *id, scgms::IFilter *output, scgms::IFilter **filter) {
 
-	if (*id == watchdog_filter::descriptor.id) {
-		return Manufacture_Object<CWatchdog_Filter>(filter, output);
+	if (*id == auxin_filter::descriptor.id) {
+		return Manufacture_Object<CAuxIn_Filter>(filter, output);
 	}
 
 	return E_NOTIMPL;

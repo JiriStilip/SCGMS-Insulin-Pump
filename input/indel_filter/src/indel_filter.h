@@ -42,27 +42,17 @@
 #pragma warning(push)
 #pragma warning(disable : 4250) // C4250 - 'class1' : inherits 'class2::member' via dominance
 
-class CWatchdog_Filter : public scgms::CBase_Filter
+class CInDel_Filter : public scgms::CBase_Filter
 {
 private:
-	int64_t logical_time;
-	bool running;
-	int64_t interval;
-	bool alive;
-	void Kick(int64_t event_time);
-
+	double reservoir_capacity;
 protected:
 	virtual HRESULT Do_Execute(scgms::UDevice_Event event) override final;
 	virtual HRESULT Do_Configure(scgms::SFilter_Configuration configuration, refcnt::Swstr_list &error_description) override final;
-
 public:
-	bool IsAlive();
-	bool IsRunning();
-	int64_t GetInterval();
-	void Trigger();
-	void Reset();
-	CWatchdog_Filter(scgms::IFilter *output);
-	virtual ~CWatchdog_Filter();
+	double GetReservoirCapacity();
+	CInDel_Filter(scgms::IFilter *output);
+	virtual ~CInDel_Filter();
 	virtual HRESULT IfaceCalling QueryInterface(const GUID *riid, void **ppvObj) override final;
 };
 

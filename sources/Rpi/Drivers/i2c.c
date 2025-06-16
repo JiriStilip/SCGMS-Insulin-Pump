@@ -6,8 +6,8 @@
 void i2c_init(void)
 {
     // Set GPIO2 and GPIO3 functions to ALT0
-    gpio_set_function(2, GPIO_FUNCTION_ALT0);
-    gpio_set_function(3, GPIO_FUNCTION_ALT0);
+    gpio_set_function(PIN_I2C1_SDA, GPIO_FUNCTION_ALT0);
+    gpio_set_function(PIN_I2C1_SCL, GPIO_FUNCTION_ALT0);
 
     // Set I2C enable
     REG_BSC1_C |= BSC_C_I2CEN;

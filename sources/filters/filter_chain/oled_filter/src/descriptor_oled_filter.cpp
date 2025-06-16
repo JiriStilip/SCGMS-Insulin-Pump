@@ -18,7 +18,7 @@ namespace oled_filter {
 
 	constexpr size_t param_count = 0;
 
-	const wchar_t* filter_name = L"OLED display filter";
+	const wchar_t* filter_name = L"OLED Display Filter";
 
 	const scgms::TFilter_Descriptor descriptor = {
 		id,

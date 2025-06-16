@@ -36,11 +36,11 @@
 
 #include "cgm_filter.h"
 #include "descriptor.h"
-#include "uart_print.h"
 #include "input.h"
 #include <FreeRTOS.h>
 #include <task.h>
 #include "rtl/rattime.h"
+#include <gpio_irq.h>
 
 CCGM_Filter::CCGM_Filter(scgms::IFilter *output) : CBase_Filter(output)
 {
@@ -79,25 +79,24 @@ double CCGM_Filter::GetMeasurementInterval()
 
 void cgmfilter_task(void *pvParameters)
 {
-	print("Starting generating CGM levels.");
 	CCGM_Filter *cgm = (CCGM_Filter *)pvParameters;
 	const TickType_t xDelay = cgm->GetTaskPeriod() / portTICK_RATE_MS;
 	int level;
 	double start_time = cgm->GetFirstEventTimestamp();
 	double time = start_time;
-	double interval_mins = cgm->GetMeasurementInterval();
+	double interval = cgm->GetMeasurementInterval() * scgms::One_Minute;
 	int index = 0;
+	// vTaskDelay(14000 / portTICK_RATE_MS);	// Testing CGM watchdog
 	while (true)
 	{
 		level = random_levels[index++];
 		cgm->Create_Event(level, time);
-		time += interval_mins * scgms::One_Minute;
+		time += interval;
 		vTaskDelay(xDelay);
 		if(index >= sizeof(random_levels)/sizeof(random_levels[0]))
 		{
 			index = 0;
 			time = start_time;
-			print("Restarting loop.");
 		}
 	}
 }
@@ -116,7 +115,7 @@ HRESULT IfaceCalling CCGM_Filter::Do_Configure(scgms::SFilter_Configuration conf
 	first_event_timestamp = configuration.Read_Double(cgm_filter::rsFirstEventTimestamp, 1.0);
 	measurement_interval = configuration.Read_Double(cgm_filter::rsMeasurementInterval, 5);
 
-	xTaskCreate(cgmfilter_task, "CGM Filter", 4 * 1024, this, 1, NULL);
+	xTaskCreate(cgmfilter_task, "CGM Filter", 4 * 1024, this, 1, &cgm_task_handle);
 
 	return S_OK;
 }
@@ -124,4 +123,4 @@ HRESULT IfaceCalling CCGM_Filter::Do_Configure(scgms::SFilter_Configuration conf
 HRESULT IfaceCalling CCGM_Filter::Do_Execute(scgms::UDevice_Event event)
 {
 	return mOutput.Send(event);
-};
+}

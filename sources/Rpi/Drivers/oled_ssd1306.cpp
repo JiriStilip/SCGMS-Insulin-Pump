@@ -2,6 +2,7 @@
 #include "oled_font.h"
 
 #include "i2c.h"
+#include "irq.h"
 
 CDisplay_SSD1306 sDisplay_SSD1306{};
 
@@ -209,6 +210,8 @@ void CDisplay_SSD1306::Put_String(uint16_t x, uint16_t y, const char* str)
 
 void CDisplay_SSD1306::Flip()
 {
+    irqBlock();
+
     // nastavime kurzor na levy horni roh
     static uint8_t flip1[] = {SSD1306_Cmd::Command_Start,
                               SSD1306_Cmd::Set_Page_Addr,
@@ -240,4 +243,6 @@ void CDisplay_SSD1306::Flip()
         
         Send_Command_Sequence(packet, sizeof(packet));
     }
+    
+    irqUnblock();
 }

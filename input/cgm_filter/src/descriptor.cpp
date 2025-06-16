@@ -47,7 +47,7 @@
 #include <array>
 
 /*
- * Example filter descriptor block
+ * Filter descriptor block
  */
 
 namespace cgm_filter {

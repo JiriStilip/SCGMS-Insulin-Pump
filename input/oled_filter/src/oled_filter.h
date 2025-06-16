@@ -16,6 +16,11 @@ class COLED_Filter : public scgms::CBase_Filter {
 		void drawMainScreen();
 		void updateBG(double level);
 		void updateTime(double time);
+		void updateBasal(double level);
+		void updateBolus(double level);
+		void updateReservoir(double level);
+		void updateTemperature(double level);
+		void updateText(scgms::NDevice_Event_Code event_code, GUID signal_id);
 		COLED_Filter(scgms::IFilter *output);
 		virtual ~COLED_Filter();
 	

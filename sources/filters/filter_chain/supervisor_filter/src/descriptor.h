@@ -40,12 +40,12 @@
 
 #include <rtl/guid.h>
 
-namespace watchdog_filter {
+namespace supervisor_filter {
 
-	constexpr GUID id = { 0x893fdedc, 0xc5ec, 0x45cc, { 0xba, 0x9, 0xc3, 0x1e, 0x14, 0xf6, 0xdb, 0x04 } }; // {893FDEDC-C5EC-45CC-BA09-C31E14F6DB04}
+	constexpr GUID id = { 0x095e8653, 0xde85, 0x4d78, { 0xbc, 0xd5, 0xa4, 0xcf, 0x77, 0x8a, 0x86, 0x91 } }; // {095E8653-DE85-4D78-BCD5-A4CF778A8691}
 
-	extern const wchar_t* rsInterval;
+	extern const wchar_t* rsWatchdogInterval;
 }
 
-extern "C" HRESULT IfaceCalling do_create_filter_watchdog_filter(const GUID *id, scgms::IFilter *output, scgms::IFilter **filter) ;
-extern "C" HRESULT IfaceCalling do_get_filter_descriptors_watchdog_filter(scgms::TFilter_Descriptor **begin, scgms::TFilter_Descriptor **end) ;
+extern "C" HRESULT IfaceCalling do_create_filter_supervisor_filter(const GUID *id, scgms::IFilter *output, scgms::IFilter **filter) ;
+extern "C" HRESULT IfaceCalling do_get_filter_descriptors_supervisor_filter(scgms::TFilter_Descriptor **begin, scgms::TFilter_Descriptor **end) ;

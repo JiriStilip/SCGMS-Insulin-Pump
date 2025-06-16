@@ -40,6 +40,7 @@
 #include "rtl/rattime.h"
 
 #include <uart_print.h>
+#include "timer.h"
 
 CPrint_Filter::CPrint_Filter(scgms::IFilter *output) : CBase_Filter(output)
 {
@@ -66,24 +67,76 @@ HRESULT IfaceCalling CPrint_Filter::Do_Configure(scgms::SFilter_Configuration co
 
 HRESULT IfaceCalling CPrint_Filter::Do_Execute(scgms::UDevice_Event event)
 {
-	if (event.is_level_event())
+	print("--------");
+
+	if (event.event_code() == scgms::NDevice_Event_Code::Level)
 	{
-		print("\nEvent level: ");
-		print_d(event.level());
-		print("Event time:");
-		std::string time_str = Rat_Time_To_Local_Time_Str(event.device_time(), "%H:%M:%S");
-		print(time_str.c_str());
+		if (event.signal_id() == scgms::signal_BG)
+		{
+			print("signal_BG level: ");
+			print_d(event.level());
+			print("Device time:");
+			std::string time_str = Rat_Time_To_Local_Time_Str(event.device_time(), "%H:%M:%S");
+			print(time_str.c_str());
+		}
+		else if (event.signal_id() == scgms::signal_Air_Temperature)
+		{
+			print("signal_Air_Temperature level: ");
+			print_d(event.level());
+		}
+		else if (event.signal_id() == scgms::signal_Requested_Insulin_Basal_Rate)
+		{
+			print("signal_Requested_Insulin_Basal_Rate level: ");
+			print_d(event.level());
+			print("Device time:");
+			std::string time_str = Rat_Time_To_Local_Time_Str(event.device_time(), "%H:%M:%S");
+			print(time_str.c_str());
+		}
+		else if (event.signal_id() == scgms::signal_Requested_Insulin_Bolus)
+		{
+			print("signal_Requested_Insulin_Bolus level: ");
+			print_d(event.level());
+			print("Device time:");
+			std::string time_str = Rat_Time_To_Local_Time_Str(event.device_time(), "%H:%M:%S");
+			print(time_str.c_str());
+		}
+		else if (event.signal_id() == scgms::signal_Remaining_Insulin)
+		{
+			print("signal_Remaining_Insulin level: ");
+			print_d(event.level());
+		}
 	}
-	else if (event.is_info_event())
+	else if (event.event_code() == scgms::NDevice_Event_Code::Masked_Level)
 	{
+		if (event.signal_id() == scgms::signal_Requested_Insulin_Bolus)
+		{
+			print("signal_Requested_Insulin_Bolus level (masked): ");
+			print_d(event.level());
+		}
+		else if (event.signal_id() == scgms::signal_Requested_Insulin_Basal_Rate)
+		{
+			print("signal_Requested_Insulin_Basal_Rate level (masked): ");
+			print_d(event.level());
+		}
+	}
+	else
+	{
+		if (event.event_code() == scgms::NDevice_Event_Code::Information)
+		{
+			print("Information event: ");
+		}
+		else if (event.event_code() == scgms::NDevice_Event_Code::Warning)
+		{
+			print("Warning event: ");
+		}
+		else if (event.event_code() == scgms::NDevice_Event_Code::Error)
+		{
+			print("Error event: ");
+		}
 		std::wstring wstr = refcnt::WChar_Container_To_WString(event.info.get());
 		std::string str = Narrow_WString(wstr);
-		print("\nEvent Info:");
 		print(str.c_str());
 	}
-	else if (event.event_code() == scgms::NDevice_Event_Code::Shut_Down)
-	{
-		print("\nShutdown Event");
-	}
+	
 	return mOutput.Send(event);
-};
+}

@@ -21,9 +21,12 @@ void CLoaded_Filters::load_descriptors()
 			std::copy(desc_begin, desc_end, std::back_inserter(mFilter_Descriptors));
 		}
 	};
-		get_descriptors(do_get_filter_descriptors_print_filter);
+		get_descriptors(do_get_filter_descriptors_indel_filter);
+	get_descriptors(do_get_filter_descriptors_print_filter);
+	get_descriptors(do_get_filter_descriptors_inset_filter);
 	get_descriptors(do_get_filter_descriptors_cgm_filter);
-	get_descriptors(do_get_filter_descriptors_watchdog_filter);
+	get_descriptors(do_get_filter_descriptors_auxin_filter);
+	get_descriptors(do_get_filter_descriptors_supervisor_filter);
 	get_descriptors(do_get_filter_descriptors_oled_filter);
 }
 
@@ -42,7 +45,15 @@ scgms::SFilter create_filter_body(const GUID &id, scgms::IFilter *next_filter)
 	scgms::SFilter result;
 	scgms::IFilter *filter;
 
+	if (do_create_filter_indel_filter(&id, next_filter, &filter) == S_OK)
+	{
+		result = refcnt::make_shared_reference_ext<scgms::SFilter, scgms::IFilter>(filter, false);
+	}
 	if (do_create_filter_print_filter(&id, next_filter, &filter) == S_OK)
+	{
+		result = refcnt::make_shared_reference_ext<scgms::SFilter, scgms::IFilter>(filter, false);
+	}
+	if (do_create_filter_inset_filter(&id, next_filter, &filter) == S_OK)
 	{
 		result = refcnt::make_shared_reference_ext<scgms::SFilter, scgms::IFilter>(filter, false);
 	}
@@ -50,7 +61,11 @@ scgms::SFilter create_filter_body(const GUID &id, scgms::IFilter *next_filter)
 	{
 		result = refcnt::make_shared_reference_ext<scgms::SFilter, scgms::IFilter>(filter, false);
 	}
-	if (do_create_filter_watchdog_filter(&id, next_filter, &filter) == S_OK)
+	if (do_create_filter_auxin_filter(&id, next_filter, &filter) == S_OK)
+	{
+		result = refcnt::make_shared_reference_ext<scgms::SFilter, scgms::IFilter>(filter, false);
+	}
+	if (do_create_filter_supervisor_filter(&id, next_filter, &filter) == S_OK)
 	{
 		result = refcnt::make_shared_reference_ext<scgms::SFilter, scgms::IFilter>(filter, false);
 	}
