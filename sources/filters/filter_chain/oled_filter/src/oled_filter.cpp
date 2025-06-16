@@ -3,7 +3,6 @@
 
 #include <oled_ssd1306.h>
 
-#include <uart_print.h>
 #include <ftoa.h>
 #include "rtl/rattime.h"
 
