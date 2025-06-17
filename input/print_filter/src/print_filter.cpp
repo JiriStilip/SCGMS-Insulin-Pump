@@ -40,7 +40,6 @@
 #include "rtl/rattime.h"
 
 #include <uart_print.h>
-#include "timer.h"
 
 CPrint_Filter::CPrint_Filter(scgms::IFilter *output) : CBase_Filter(output)
 {
