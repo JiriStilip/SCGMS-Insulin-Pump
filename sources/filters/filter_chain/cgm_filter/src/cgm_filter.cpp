@@ -86,7 +86,6 @@ void cgmfilter_task(void *pvParameters)
 	double time = start_time;
 	double interval = cgm->GetMeasurementInterval() * scgms::One_Minute;
 	int index = 0;
-	// vTaskDelay(14000 / portTICK_RATE_MS);	// Testing CGM watchdog
 	while (true)
 	{
 		level = random_levels[index++];
