@@ -262,8 +262,7 @@ HRESULT IfaceCalling COLED_Filter::Do_Execute(scgms::UDevice_Event event)
 			updateBasal(event.level());
 		}
 	}
-
-	if (event.event_code() == scgms::NDevice_Event_Code::Error)
+	else if (event.event_code() == scgms::NDevice_Event_Code::Error)
 	{
 		if (event.signal_id() == scgms::signal_BG)
 		{
