@@ -269,6 +269,14 @@ HRESULT IfaceCalling COLED_Filter::Do_Execute(scgms::UDevice_Event event)
 			updateBG(0);
 		}
 	}
+	else if (event.event_code() == scgms::NDevice_Event_Code::Warning)
+	{
+		if (event.signal_id() == scgms::signal_Air_Temperature)
+		{
+			sDisplay_SSD1306.Put_String(65, 28, "(!)");
+			sDisplay_SSD1306.Flip();
+		}
+	}
 
 	if (event.event_code() != scgms::NDevice_Event_Code::Masked_Level)
 	{

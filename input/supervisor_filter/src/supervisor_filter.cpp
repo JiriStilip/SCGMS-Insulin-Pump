@@ -152,7 +152,10 @@ HRESULT IfaceCalling CSupervisor_Filter::Do_Execute(scgms::UDevice_Event event)
 		{
 			if (event.level() > Air_Temperature_Overheating)
 			{
+				// to avoid the warning being overwritten by the level event
+				HRESULT res = mOutput.Send(event);
 				Create_Temp_Warning_Event();
+				return res;
 			}
 		}
 	}
