@@ -162,6 +162,7 @@ HRESULT IfaceCalling CInDel_Filter::Do_Execute(scgms::UDevice_Event event)
 		{
 			if (!time_received)
 			{
+				last_device_time = event.device_time();
 				time_received = true;
 			}
 			else 
