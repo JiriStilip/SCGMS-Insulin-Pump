@@ -72,7 +72,7 @@ HRESULT IfaceCalling CPrint_Filter::Do_Execute(scgms::UDevice_Event event)
 	{
 		if (event.signal_id() == scgms::signal_BG)
 		{
-			print("signal_BG level: ");
+			print("signal_BG level [mg/dL]: ");
 			print_d(event.level());
 			print("Device time:");
 			std::string time_str = Rat_Time_To_Local_Time_Str(event.device_time(), "%H:%M:%S");
@@ -80,12 +80,12 @@ HRESULT IfaceCalling CPrint_Filter::Do_Execute(scgms::UDevice_Event event)
 		}
 		else if (event.signal_id() == scgms::signal_Air_Temperature)
 		{
-			print("signal_Air_Temperature level: ");
+			print("signal_Air_Temperature level [°C]: ");
 			print_d(event.level());
 		}
 		else if (event.signal_id() == scgms::signal_Requested_Insulin_Basal_Rate)
 		{
-			print("signal_Requested_Insulin_Basal_Rate level: ");
+			print("signal_Requested_Insulin_Basal_Rate level [U/h]: ");
 			print_d(event.level());
 			print("Device time:");
 			std::string time_str = Rat_Time_To_Local_Time_Str(event.device_time(), "%H:%M:%S");
@@ -93,7 +93,7 @@ HRESULT IfaceCalling CPrint_Filter::Do_Execute(scgms::UDevice_Event event)
 		}
 		else if (event.signal_id() == scgms::signal_Requested_Insulin_Bolus)
 		{
-			print("signal_Requested_Insulin_Bolus level: ");
+			print("signal_Requested_Insulin_Bolus level [U]: ");
 			print_d(event.level());
 			print("Device time:");
 			std::string time_str = Rat_Time_To_Local_Time_Str(event.device_time(), "%H:%M:%S");
@@ -101,7 +101,7 @@ HRESULT IfaceCalling CPrint_Filter::Do_Execute(scgms::UDevice_Event event)
 		}
 		else if (event.signal_id() == scgms::signal_Remaining_Insulin)
 		{
-			print("signal_Remaining_Insulin level: ");
+			print("signal_Remaining_Insulin level [%]: ");
 			print_d(event.level());
 		}
 	}
@@ -109,12 +109,12 @@ HRESULT IfaceCalling CPrint_Filter::Do_Execute(scgms::UDevice_Event event)
 	{
 		if (event.signal_id() == scgms::signal_Requested_Insulin_Bolus)
 		{
-			print("signal_Requested_Insulin_Bolus level (masked): ");
+			print("signal_Requested_Insulin_Bolus level [U] (masked): ");
 			print_d(event.level());
 		}
 		else if (event.signal_id() == scgms::signal_Requested_Insulin_Basal_Rate)
 		{
-			print("signal_Requested_Insulin_Basal_Rate level (masked): ");
+			print("signal_Requested_Insulin_Basal_Rate level [U/h] (masked): ");
 			print_d(event.level());
 		}
 	}
