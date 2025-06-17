@@ -104,6 +104,22 @@ HRESULT IfaceCalling CPrint_Filter::Do_Execute(scgms::UDevice_Event event)
 			print("signal_Remaining_Insulin level [%]: ");
 			print_d(event.level());
 		}
+		else if (event.signal_id() == scgms::signal_Delivered_Insulin_Basal_Rate)
+		{
+			print("signal_Delivered_Insulin_Basal_Rate level [U]: ");
+			print_d(event.level());
+			print("Device time:");
+			std::string time_str = Rat_Time_To_Local_Time_Str(event.device_time(), "%H:%M:%S");
+			print(time_str.c_str());
+		}
+		else if (event.signal_id() == scgms::signal_Delivered_Insulin_Bolus)
+		{
+			print("signal_Delivered_Insulin_Bolus level [U]: ");
+			print_d(event.level());
+			print("Device time:");
+			std::string time_str = Rat_Time_To_Local_Time_Str(event.device_time(), "%H:%M:%S");
+			print(time_str.c_str());
+		}
 	}
 	else if (event.event_code() == scgms::NDevice_Event_Code::Masked_Level)
 	{

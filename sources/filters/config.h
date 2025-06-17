@@ -11,7 +11,7 @@ const char* config_data =
 "[Filter_003_{B3B796C4-46F8-4F6C-A6C1-37C0C174BF90}]\r\n"
 "\r\n"
 "[Filter_004_{E2379C8A-D70E-4E2F-A03C-7EF0BC7D323E}]\r\n"
-"reservoir_capacity = 300\r\n"
+"reservoir_capacity = 20\r\n"
 "\r\n"
 "[Filter_005_{095E8653-DE85-4D78-BCD5-A4CF778A8691}]\r\n"
 "watchdog_interval = 8000\r\n"

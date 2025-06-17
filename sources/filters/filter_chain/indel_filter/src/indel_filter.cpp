@@ -42,6 +42,82 @@ double CInDel_Filter::GetReservoirCapacity()
 	return reservoir_capacity;
 }
 
+// refills the reservoir to percentage of its capacity, returns remaining insulin units
+double CInDel_Filter::RefillInsulin(double percentage)
+{
+	remaining_insulin = (percentage / 100.0) * reservoir_capacity;
+
+	return remaining_insulin;
+}
+
+bool CInDel_Filter::ReservoirEmpty()
+{
+	return (remaining_insulin < Minimum_Insulin_Amount) ? true : false;
+}
+
+void CInDel_Filter::DeliverInsulin(double device_time)
+{
+	// amount of insulin corresponding to the elapsed time
+	double basal_amount = ((device_time - last_device_time) / scgms::One_Hour) * basal_rate;
+
+	if (basal_amount < Minimum_Insulin_Amount) return;
+	// if there is not enough insulin, deliver what is left
+	if (basal_amount > remaining_insulin) basal_amount = remaining_insulin;
+	// if it exceeds the maximum flow, deliver maximum flow
+	if (basal_amount > Maximum_Insulin_Flow) basal_amount = Maximum_Insulin_Flow;
+
+	remaining_insulin -= basal_amount;
+	Create_Remaining_Insulin_Level_Event();
+	Create_Delivery_Event(scgms::signal_Delivered_Insulin_Basal_Rate, basal_amount, device_time);
+
+	if (ReservoirEmpty())
+	{
+		Create_Insulin_Warning_Event();
+		return;
+	}
+
+	double bolus_amount = bolus_to_deliver;
+	if (bolus_amount < Minimum_Insulin_Amount) return;
+	// deliver no more than Maximum_Insulin_Flow units in total
+	if ((bolus_amount + basal_amount) > Maximum_Insulin_Flow) bolus_amount = Maximum_Insulin_Flow - basal_amount;
+	// again, if there is not enough insulin, deliver the rest
+	if (bolus_amount > remaining_insulin) bolus_amount = remaining_insulin;
+
+	remaining_insulin -= bolus_amount;
+	Create_Remaining_Insulin_Level_Event();
+	Create_Delivery_Event(scgms::signal_Delivered_Insulin_Bolus, bolus_amount, device_time);
+	bolus_to_deliver -= bolus_amount;
+
+	if (ReservoirEmpty()) Create_Insulin_Warning_Event();
+}
+
+void CInDel_Filter::Create_Remaining_Insulin_Level_Event()
+{
+	scgms::UDevice_Event event{scgms::NDevice_Event_Code::Level};
+	event.signal_id() = scgms::signal_Remaining_Insulin;
+	event.level() = (remaining_insulin / reservoir_capacity) * 100.0;
+
+	mOutput.Send(event);
+}
+
+void CInDel_Filter::Create_Insulin_Warning_Event()
+{
+	scgms::UDevice_Event event{scgms::NDevice_Event_Code::Warning};
+	event.signal_id() = scgms::signal_Remaining_Insulin;
+
+	mOutput.Send(event);
+}
+
+void CInDel_Filter::Create_Delivery_Event(GUID signal_id, double level, double time)
+{
+	scgms::UDevice_Event event{scgms::NDevice_Event_Code::Level};
+	event.signal_id() = signal_id;
+	event.level() = level;
+	event.device_time() = time;
+
+	mOutput.Send(event);
+}
+
 CInDel_Filter::CInDel_Filter(scgms::IFilter *output) : CBase_Filter(output)
 {
 	//
@@ -62,12 +138,59 @@ HRESULT IfaceCalling CInDel_Filter::QueryInterface(const GUID *riid, void **ppvO
 
 HRESULT IfaceCalling CInDel_Filter::Do_Configure(scgms::SFilter_Configuration configuration, refcnt::Swstr_list &error_description)
 {
-	reservoir_capacity = configuration.Read_Double(indel_filter::rsReservoirCapacity, 300);
+	reservoir_capacity = configuration.Read_Double(indel_filter::rsReservoirCapacity, 20);
+
+	remaining_insulin = 0.0;
+	time_received = false;
+	last_device_time = 0.0;
+	basal_rate = 0.0;
+	bolus_to_deliver = 0.0;
 
 	return S_OK;
 }
 
 HRESULT IfaceCalling CInDel_Filter::Do_Execute(scgms::UDevice_Event event)
 {
+	if (event.event_code() == scgms::NDevice_Event_Code::Level)
+	{
+		if (event.signal_id() == scgms::signal_Remaining_Insulin)
+		{
+			RefillInsulin(event.level());
+		}
+		// signal_BG means a step in the simulation time
+		else if (event.signal_id() == scgms::signal_BG)
+		{
+			if (!time_received)
+			{
+				time_received = true;
+			}
+			else 
+			{
+				HRESULT res = mOutput.Send(event);
+				
+				if (ReservoirEmpty())
+				{
+					Create_Insulin_Warning_Event();
+					bolus_to_deliver = 0.0;		// so the bolus doses cannot accumulate while there is no insulin
+				}
+				else 
+				{
+					DeliverInsulin(event.device_time());
+				}
+				last_device_time = event.device_time();
+
+				return res;
+			}
+		}
+		else if (event.signal_id() == scgms::signal_Requested_Insulin_Basal_Rate)
+		{
+			basal_rate = event.level();
+		}
+		else if (event.signal_id() == scgms::signal_Requested_Insulin_Bolus)
+		{
+			bolus_to_deliver += event.level();
+		}
+	}
+
 	return mOutput.Send(event);
 }

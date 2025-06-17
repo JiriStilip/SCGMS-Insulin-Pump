@@ -20,7 +20,7 @@ class COLED_Filter : public scgms::CBase_Filter {
 		void updateBolus(double level);
 		void updateReservoir(double level);
 		void updateTemperature(double level);
-		void updateText(scgms::NDevice_Event_Code event_code, GUID signal_id);
+		void updateText(scgms::NDevice_Event_Code event_code, GUID signal_id, double value = 0.0);
 		COLED_Filter(scgms::IFilter *output);
 		virtual ~COLED_Filter();
 	

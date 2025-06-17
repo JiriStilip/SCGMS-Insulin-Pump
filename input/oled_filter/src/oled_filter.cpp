@@ -22,7 +22,7 @@ void COLED_Filter::drawMainScreen()
 	sDisplay_SSD1306.Put_String(0, 28, "  -.-  U");
 
 	sDisplay_SSD1306.Put_String(65, 2, "  --:--:--");
-	sDisplay_SSD1306.Put_String(65, 15, "   [     ]");
+	sDisplay_SSD1306.Put_String(65, 15, "(!)[     ]");
 	sDisplay_SSD1306.Put_String(65, 28, "    --.- C");
 
 	sDisplay_SSD1306.Put_String(40, 42, "STARTING");
@@ -123,8 +123,17 @@ void COLED_Filter::updateReservoir(double level)
 	else if (level > 60.0) bars = 4;
 	else if (level > 40.0) bars = 3;
 	else if (level > 20.0) bars = 2;
-	else if (level > 0.0) bars = 1;
+	else if (level > 0.1) bars = 1;
 	else bars = 0;
+
+	if (bars == 0)
+	{
+		sDisplay_SSD1306.Put_String(65, 15, "(!)");
+	}
+	else
+	{
+		sDisplay_SSD1306.Fill_Rectangle(65, 14, 18, 12, false);
+	}
 
 	char buffer[6];
 	for (int i = 0; i < 5; i++)
@@ -157,7 +166,7 @@ void COLED_Filter::updateTemperature(double level)
 	sDisplay_SSD1306.Flip();
 }
 
-void COLED_Filter::updateText(scgms::NDevice_Event_Code event_code, GUID signal_id)
+void COLED_Filter::updateText(scgms::NDevice_Event_Code event_code, GUID signal_id, double value)
 {
 	sDisplay_SSD1306.Fill_Rectangle(0, 40, 128, 24, false);
 
@@ -193,6 +202,13 @@ void COLED_Filter::updateText(scgms::NDevice_Event_Code event_code, GUID signal_
 	else if (signal_id == scgms::signal_Remaining_Insulin)
 	{
 		sDisplay_SSD1306.Put_String(13, 52, "Remaining Insulin");
+	}
+	else if (signal_id == scgms::signal_Delivered_Insulin_Basal_Rate || signal_id == scgms::signal_Delivered_Insulin_Bolus)
+	{
+		sDisplay_SSD1306.Put_String(7, 52, "Delivered        U.");
+		char buffer[7];
+		ftoa(value, buffer, 3);
+		sDisplay_SSD1306.Put_String(67, 52, buffer);
 	}
 
 	sDisplay_SSD1306.Flip();
@@ -280,7 +296,14 @@ HRESULT IfaceCalling COLED_Filter::Do_Execute(scgms::UDevice_Event event)
 
 	if (event.event_code() != scgms::NDevice_Event_Code::Masked_Level)
 	{
-		updateText(event.event_code(), event.signal_id());
+		if (event.signal_id() == scgms::signal_Delivered_Insulin_Basal_Rate || event.signal_id() == scgms::signal_Delivered_Insulin_Bolus)
+		{
+			updateText(event.event_code(), event.signal_id(), event.level());
+		}
+		else
+		{
+			updateText(event.event_code(), event.signal_id());
+		}
 	}
 
 	return mOutput.Send(event);

@@ -42,15 +42,29 @@
 #pragma warning(push)
 #pragma warning(disable : 4250) // C4250 - 'class1' : inherits 'class2::member' via dominance
 
+constexpr double Maximum_Insulin_Flow = 5.0;
+constexpr double Minimum_Insulin_Amount = 0.001;
+
 class CInDel_Filter : public scgms::CBase_Filter
 {
 private:
 	double reservoir_capacity;
+	double remaining_insulin;
+	bool time_received;
+	double last_device_time;
+	double basal_rate;
+	double bolus_to_deliver;
 protected:
 	virtual HRESULT Do_Execute(scgms::UDevice_Event event) override final;
 	virtual HRESULT Do_Configure(scgms::SFilter_Configuration configuration, refcnt::Swstr_list &error_description) override final;
 public:
 	double GetReservoirCapacity();
+	double RefillInsulin(double percentage);
+	bool ReservoirEmpty();
+	void DeliverInsulin(double device_time);
+	void Create_Remaining_Insulin_Level_Event();
+	void Create_Insulin_Warning_Event();
+	void Create_Delivery_Event(GUID signal_id, double level, double time);
 	CInDel_Filter(scgms::IFilter *output);
 	virtual ~CInDel_Filter();
 	virtual HRESULT IfaceCalling QueryInterface(const GUID *riid, void **ppvObj) override final;
