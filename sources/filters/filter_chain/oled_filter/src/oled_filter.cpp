@@ -35,15 +35,22 @@ void COLED_Filter::updateBG(double level)
 {
 	sDisplay_SSD1306.Fill_Rectangle(0, 0, 64, 13, false);
 
-	char buffer[11];
-	itoa(static_cast<int>(level), buffer, 10);
-	if (level < 100.0)
+	if (level == 0)
 	{
-		sDisplay_SSD1306.Put_String(6, 2, buffer);
+		sDisplay_SSD1306.Put_String(0, 2, "---");
 	}
 	else
 	{
-		sDisplay_SSD1306.Put_String(0, 2, buffer);
+		char buffer[11];
+		itoa(static_cast<int>(level), buffer, 10);
+		if (level < 100.0)
+		{
+			sDisplay_SSD1306.Put_String(6, 2, buffer);
+		}
+		else
+		{
+			sDisplay_SSD1306.Put_String(0, 2, buffer);
+		}
 	}
 
 	sDisplay_SSD1306.Put_String(18, 2, " mg/dL");
@@ -253,6 +260,14 @@ HRESULT IfaceCalling COLED_Filter::Do_Execute(scgms::UDevice_Event event)
 		else if (event.signal_id() == scgms::signal_Requested_Insulin_Basal_Rate)
 		{
 			updateBasal(event.level());
+		}
+	}
+
+	if (event.event_code() == scgms::NDevice_Event_Code::Error)
+	{
+		if (event.signal_id() == scgms::signal_BG)
+		{
+			updateBG(0);
 		}
 	}
 
