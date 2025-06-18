@@ -189,7 +189,10 @@ HRESULT IfaceCalling CInDel_Filter::Do_Execute(scgms::UDevice_Event event)
 		}
 		else if (event.signal_id() == scgms::signal_Requested_Insulin_Bolus)
 		{
-			bolus_to_deliver += event.level();
+			if (bolus_to_deliver < Minimum_Insulin_Amount)
+			{
+				bolus_to_deliver = event.level();
+			}
 		}
 	}
 
